@@ -40,7 +40,9 @@ const DashboardScreen = () => {
     if (!user) return null;
 
     const imagePath = user.imagePath ? user.imagePath.replace(/\\/g, '/') : null;
-    const imageUrl = imagePath ? `http://localhost:5000/${imagePath}` : null;
+    const imageUrl = imagePath
+      ? `http://localhost:5000/${imagePath}`
+      : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.username);
 
     return (
       <div className="card">

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Image } from 'react-native';
 import axios from 'axios';
 
 const MedicationScreen = () => {
@@ -8,7 +7,7 @@ const MedicationScreen = () => {
   const [expandedIndex, setExpandedIndex] = useState(null);
 
   useEffect(() => {
-    axios.get('https://api.fda.gov/drug/label.json?limit=150') // Adjust the endpoint as needed
+    axios.get('https://api.fda.gov/drug/label.json?limit=20')
       .then(response => {
         setMedications(response.data.results);
         setLoading(false);
@@ -25,44 +24,68 @@ const MedicationScreen = () => {
 
   const renderMedications = () => {
     return medications.map((medication, index) => (
-      <View key={index} style={styles.medicationContainer}>
-        <TouchableOpacity onPress={() => handleToggleExpand(index)}>
-          <View style={styles.medicationHeader}>
-            {medication.openfda?.image_url ? (
-              <Image source={{ uri: medication.openfda.image_url }} style={styles.medicationImage} />
-            ) : (
-              <View style={styles.medicationImagePlaceholder} />
-            )}
-            <Text style={styles.medicationName}>{medication.openfda.brand_name || 'Unknown Medication'}</Text>
-          </View>
-        </TouchableOpacity>
+      <div key={index} style={styles.medicationContainer}>
+        <div
+          style={styles.medicationHeader}
+          onClick={() => handleToggleExpand(index)}
+        >
+          {medication.openfda?.image_url ? (
+            <img
+              src={medication.openfda.image_url}
+              alt="Medication"
+              style={styles.medicationImage}
+            />
+          ) : (
+            <div style={styles.medicationImagePlaceholder} />
+          )}
+          <span style={styles.medicationName}>
+            {medication.openfda?.brand_name?.[0] || 'Unknown Medication'}
+          </span>
+        </div>
         {expandedIndex === index && (
-          <View>
-            <Text style={styles.medicationInfo}><Text style={styles.bold}>Benefits:</Text> {medication.indications_and_usage || 'No information available'}</Text>
-            <Text style={styles.medicationInfo}><Text style={styles.bold}>Risks of Overdose:</Text> {medication.warnings || 'No information available'}</Text>
-          </View>
+          <div>
+            <div style={styles.medicationInfo}>
+              <span style={styles.bold}>Benefits:</span>{' '}
+              {medication.indications_and_usage
+                ? Array.isArray(medication.indications_and_usage)
+                  ? medication.indications_and_usage[0]
+                  : medication.indications_and_usage
+                : 'No information available'}
+            </div>
+            <div style={styles.medicationInfo}>
+              <span style={styles.bold}>Risks of Overdose:</span>{' '}
+              {medication.warnings
+                ? Array.isArray(medication.warnings)
+                  ? medication.warnings[0]
+                  : medication.warnings
+                : 'No information available'}
+            </div>
+          </div>
         )}
-      </View>
+      </div>
     ));
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Medications for Mental Health</Text>
+    <div style={styles.container}>
+      <h2 style={styles.title}>Medications for Mental Health</h2>
       {loading ? (
-        <ActivityIndicator size="large" color="#6495ED" />
+        <div style={{ textAlign: 'center', margin: '2rem' }}>
+          <div className="loader" />
+          <span>Loading...</span>
+        </div>
       ) : (
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <div style={styles.scrollViewContent}>
           {renderMedications()}
-        </ScrollView>
+        </div>
       )}
-    </View>
+    </div>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
-    flex: 1,
+    minHeight: '100vh',
     padding: 20,
     backgroundColor: '#FFE5E5',
   },
@@ -74,20 +97,20 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     paddingBottom: 20,
+    maxWidth: 600,
+    margin: '0 auto',
   },
   medicationContainer: {
     marginBottom: 20,
     padding: 15,
     backgroundColor: '#fff',
     borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 2,
+    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+    cursor: 'pointer',
+    transition: 'box-shadow 0.2s',
   },
   medicationHeader: {
-    flexDirection: 'row',
+    display: 'flex',
     alignItems: 'center',
   },
   medicationImage: {
@@ -95,6 +118,8 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 5,
     marginRight: 15,
+    objectFit: 'cover',
+    background: '#e0e0e0',
   },
   medicationImagePlaceholder: {
     width: 50,
@@ -110,10 +135,11 @@ const styles = StyleSheet.create({
   medicationInfo: {
     fontSize: 16,
     marginBottom: 5,
+    marginTop: 10,
   },
   bold: {
     fontWeight: 'bold',
   },
-});
+};
 
 export default MedicationScreen;

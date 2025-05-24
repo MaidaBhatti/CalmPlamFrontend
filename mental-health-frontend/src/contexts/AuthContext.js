@@ -1,7 +1,7 @@
-import { createContext, useState, useEffect } from 'react';
-import { getCurrentUser } from '../services/auth.service';
+import React, { createContext, useState, useEffect } from 'react';
+import { getCurrentUser, login as loginService, register as registerService, logout as logoutService } from '../services/auth.service';
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -27,8 +27,12 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const { user, token } = await login(email, password);
-      setUser(user);
+      const { token } = await loginService(email, password);
+      // Save token to localStorage if not already done
+      localStorage.setItem('token', token);
+      // Fetch user profile
+      const userData = await getCurrentUser();
+      setUser(userData);
       setIsAuthenticated(true);
       return { success: true };
     } catch (error) {
@@ -38,7 +42,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const { user, token } = await register(userData);
+      const { user } = await registerService(userData);
       setUser(user);
       setIsAuthenticated(true);
       return { success: true };
@@ -48,7 +52,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    logout();
+    logoutService();
     setUser(null);
     setIsAuthenticated(false);
   };
@@ -57,6 +61,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
+        setUser,
         isAuthenticated,
         isLoading,
         login,
@@ -68,5 +73,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
-export default AuthContext;

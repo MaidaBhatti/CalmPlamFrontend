@@ -24,11 +24,12 @@ export const logout = () => {
 };
 
 export const getCurrentUser = async () => {
-  try {
-    const response = await API.get('/users/me');
-    return response.data;
-  } catch (error) {
-    logout();
-    return null;
-  }
+  const token = localStorage.getItem('token');
+  const response = await fetch('http://localhost:5000/api/users/dashboard', {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Failed to fetch user');
+  return await response.json();
 };
