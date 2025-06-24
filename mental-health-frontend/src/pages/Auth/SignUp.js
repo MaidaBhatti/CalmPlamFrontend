@@ -43,7 +43,20 @@ function SignUp() {
     setError('');
     
     try {
-      const result = await register(formData);
+      const { username, email, password, confirmPassword, age, gender, height, weight } = formData;
+      
+      const userData = {
+        username,
+        email,
+        password,
+        confirmPassword,
+        age,
+        gender,
+        height,
+        weight
+      };
+      
+      const result = await register(userData);
       if (result.success) {
         navigate('/dashboard');
       } else {
@@ -127,58 +140,55 @@ function SignUp() {
               onChange={handleChange}
             />
           </Grid>
-          // In your SignUp.js, add these fields to the form
-<Grid container spacing={2}>
-  {/* Existing fields */}
-  <Grid item xs={12} md={6}>
-    <TextField
-      fullWidth
-      name="age"
-      label="Age"
-      type="number"
-      value={formData.age}
-      onChange={handleChange}
-    />
-  </Grid>
-  <Grid item xs={12} md={6}>
-    <TextField
-      fullWidth
-      name="gender"
-      label="Gender"
-      select
-      SelectProps={{ native: true }}
-      value={formData.gender}
-      onChange={handleChange}
-    >
-      <option value=""></option>
-      <option value="Male">Male</option>
-      <option value="Female">Female</option>
-      <option value="Other">Other</option>
-      <option value="Prefer not to say">Prefer not to say</option>
-    </TextField>
-  </Grid>
-  <Grid item xs={12} md={6}>
-    <TextField
-      fullWidth
-      name="height"
-      label="Height (cm)"
-      type="number"
-      value={formData.height}
-      onChange={handleChange}
-    />
-  </Grid>
-  <Grid item xs={12} md={6}>
-    <TextField
-      fullWidth
-      name="weight"
-      label="Weight (kg)"
-      type="number"
-      value={formData.weight}
-      onChange={handleChange}
-    />
-  </Grid>
-  {/* Add more fields as needed */}
-</Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                name="age"
+                label="Age"
+                type="number"
+                value={formData.age}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                name="gender"
+                label="Gender"
+                select
+                SelectProps={{ native: true }}
+                value={formData.gender}
+                onChange={handleChange}
+              >
+                <option value=""></option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </TextField>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                name="height"
+                label="Height (cm)"
+                type="number"
+                value={formData.height}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                name="weight"
+                label="Weight (kg)"
+                type="number"
+                value={formData.weight}
+                onChange={handleChange}
+              />
+            </Grid>
+          </Grid>
         </Grid>
 
         <Button 

@@ -40,17 +40,26 @@ const DashboardScreen = () => {
     if (!user) return null;
 
     const imagePath = user.imagePath ? user.imagePath.replace(/\\/g, '/') : null;
-    const imageUrl = imagePath
-      ? `http://localhost:5000/${imagePath}`
+    const imageUrl = user.image
+      ? `http://localhost:5000/${user.image.replace(/\\/g, '/')}`
       : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.username);
 
     return (
-      <div className="card">
-        {imageUrl ? (
-          <img src={imageUrl} alt="User" className="avatar" onError={(e) => { e.target.src = ''; }} />
-        ) : (
-          <p>No Image Available</p>
-        )}
+      <div className="card" style={{ textAlign: 'center' }}>
+        <img
+          src={imageUrl}
+          alt="User"
+          className="avatar"
+          style={{
+            width: 120,
+            height: 120,
+            borderRadius: '50%',
+            objectFit: 'cover',
+            border: '3px solid #fff',
+            boxShadow: '0 2px 8px #b2ebf2',
+            marginBottom: 18,
+          }}
+        />
         <h2>{user.username}</h2>
         <p><strong>Height:</strong> {user.height}</p>
         <p><strong>Weight:</strong> {user.weight}</p>

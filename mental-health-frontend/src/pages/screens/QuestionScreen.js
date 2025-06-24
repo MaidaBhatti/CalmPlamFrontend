@@ -54,6 +54,8 @@ const QuestionScreen = () => {
   const [responses, setResponses] = useState({});
   const [result, setResult] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
+  const [formData, setFormData] = useState({ username: '', email: '' });
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     setResponses({});
@@ -68,7 +70,16 @@ const QuestionScreen = () => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = e => {
+    e.preventDefault();
     if (Object.keys(responses).length < assessment.questions.length) {
       alert('Please answer all questions.');
       return;
@@ -81,7 +92,7 @@ const QuestionScreen = () => {
     setShowDialog(true);
   };
 
-  const handleCloseDialog = () => setShowDialog(false);
+  const closeModal = () => setShowModal(false);
 
   return (
     <div style={{ padding: '20px', backgroundColor: '#FFE5E5', minHeight: '100vh' }}>
@@ -196,10 +207,42 @@ const QuestionScreen = () => {
                 fontSize: '1rem',
                 cursor: 'pointer'
               }}
-              onClick={handleCloseDialog}
+              onClick={closeModal}
             >
               Close
             </button>
+          </div>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit}>
+        <input
+          name="username"
+          placeholder="Username"
+          value={formData.username}
+          onChange={handleChange}
+        />
+        <input
+          name="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+        />
+        <button type="submit">Submit</button>
+      </form>
+
+      {showModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+          background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <div style={{
+            background: '#fff', padding: 32, borderRadius: 12, minWidth: 300, textAlign: 'center'
+          }}>
+            <h2>Results</h2>
+            <p><strong>Username:</strong> {formData.username}</p>
+            <p><strong>Email:</strong> {formData.email}</p>
+            <button onClick={closeModal} style={{ marginTop: 16 }}>Close</button>
           </div>
         </div>
       )}

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 import './SideDrawer.css';
 
@@ -20,6 +20,7 @@ const SideDrawer = () => {
   const { user, logout } = useContext(AuthContext);
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Get user image or fallback avatar
   let imageUrl = '';
@@ -29,6 +30,11 @@ const SideDrawer = () => {
       ? `http://localhost:5000/${imagePath}`
       : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || 'User')}`;
   }
+
+  const handleLogout = () => {
+    logout();
+    navigate('/'); // Redirect to Welcome screen
+  };
 
   return (
     <>
@@ -65,10 +71,12 @@ const SideDrawer = () => {
               🫧 Stress Relief Game
             </NavLink>
           </li>
-          <li>
-            <button className="logout-btn" onClick={logout}>Logout</button>
-          </li>
         </ul>
+        <div style={{ padding: 24, borderTop: '1px solid #e0e0e0', background: '#fafafa' }}>
+          <button onClick={handleLogout} className="logout-btn">
+            Logout
+          </button>
+        </div>
       </nav>
     </>
   );
