@@ -1,6 +1,7 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
+import axios from 'axios';
 import './SideDrawer.css';
 
 const pages = [
@@ -19,17 +20,21 @@ const pages = [
 const SideDrawer = () => {
   const { user, logout } = useContext(AuthContext);
   const [open, setOpen] = useState(false);
+  const [userData, setUserData] = useState({ username: '', image: '' });
   const location = useLocation();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Fetch user data from your backend
+    axios.get('http://localhost:5000/api/dashboard')
+      .then(res => setUserData(res.data))
+      .catch(err => console.error(err));
+  }, []);
+
   // Get user image or fallback avatar
-  let imageUrl = '';
-  if (user) {
-    const imagePath = user.imagePath ? user.imagePath.replace(/\\/g, '/') : null;
-    imageUrl = imagePath
-      ? `http://localhost:5000/${imagePath}`
-      : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || 'User')}`;
-  }
+  let imageUrl = userData.image
+    ? `http://localhost:5000/${userData.image.replace(/\\/g, '/')}`
+    : `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.username || 'User')}`;
 
   const handleLogout = () => {
     logout();
