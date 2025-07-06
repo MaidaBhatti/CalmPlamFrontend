@@ -34,6 +34,10 @@ const DrawerNavigator = () => {
           backgroundColor: '#222',
           width: 280,
         },
+        drawerType: 'front',
+        overlayColor: 'rgba(0,0,0,0.5)',
+        drawerActiveTintColor: '#f594bd',
+        drawerInactiveTintColor: '#fff',
       }}>
       <Drawer.Screen name="Dashboard" component={DashboardScreen} />
       <Drawer.Screen name="Options" component={OptionsScreen} />
