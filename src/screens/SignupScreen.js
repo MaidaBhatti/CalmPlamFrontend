@@ -102,6 +102,7 @@ const SignupScreen = () => {
           </div>
 
           {error && <div className="error">{error}</div>}
+          }
 
           <button 
             type="submit" 
